@@ -37,3 +37,16 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+.Rproj.user
+
+# README
+README.Rmd
+
+# Article
+analysis/residential-and-school-segregation.Rmd
+
+# Submission, Template files, Draft and Raw folders
+analysis/_draft
+analysis/_raw
+analysis/_submission
+analysis/_templates

@@ -1,0 +1,20 @@
+Package: residentialschoolsegregation
+Title: School and Residential Segregation in the Reproduction of Urban Segregation
+Version: 0.9
+Authors@R:
+  person(given = "Pablo",
+         family = "Serrati",
+         role = c("cre", "aut"),
+         email = "pabloserrati@gmail.com",
+         comment = c(ORCID = "0000-0001-5300-2243"))
+Description: Supplementary material to the article "School and Residential Segregation in the Reproduction of Urban Segregation".  
+License: MIT + file LICENSE
+ByteCompile: true
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.0
+Imports: bookdown,
+    here
+Suggests: devtools,
+    git2r
