@@ -95,3 +95,31 @@ SEG_summary <- function(b, filtro0 = T, bootstrap, verbose = F, se = T){
   attr(res, which = "group") <- n
   return(res)
 }
+
+# plot_kernel: ggplot de Kernel intensity gunction --------------------------
+
+plot_kernel <- function(db, w){
+  # Make ppp
+  pts <- ppp(x = db$x, y = db$y, window = w) |>
+    rescale(1000, "km")
+
+  # Cross Validated Bandwidth
+  s <- bw.diggle(pts)
+
+  res <- pts |>
+    density(diggle = T, sigma = s, weights = db$n) |>
+    pluck("v") |>
+    reshape2::melt() |>
+    filter(!is.na(value)) |>
+    ggplot(aes(x = Var2, y = Var1)) +
+    geom_raster(aes(fill = value), alpha = 0.85) +
+    scale_fill_viridis_c("Intensity", option = "B",
+                         guide = guide_colorbar(title.position = "top")) +
+    geom_text(x = 100, y = 15, fontface="italic", lineheight=.8,
+              label = paste("Sigma:", round(s, 3), "Km" )) +
+    coord_equal() +
+    theme_void()
+
+  return(res)
+}
+

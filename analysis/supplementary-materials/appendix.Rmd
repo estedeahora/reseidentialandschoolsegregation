@@ -1,0 +1,257 @@
+---
+title: "Supplemental Material"
+subtitle: "School and Residential Segregation in the Reproduction of Urban Segregation"
+# output: html_document
+
+# output: officedown::rdocx_document
+output: bookdown::html_document2
+---
+
+```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
+
+options(OutDec= ".")
+
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE,
+                      fig.align = 'center', dpi = 300,
+                      out.height="100%",  out.width="100%")
+
+options(knitr.kable.NA = '')
+
+flextable::set_flextable_defaults(big.mark = " ", 
+                       font.size = 9,
+                       padding.bottom = 6, 
+                       padding.top = 6)
+```
+
+```{r library}
+
+library(tidyverse)
+library(sf)
+
+library(knitr)
+
+library(patchwork)
+library(ggpubr)
+
+library(officer)
+library(officedown)
+library(flextable)
+library(latex2exp)
+
+library(OasisR)
+library(segregation)
+```
+
+```{r fx}
+source(here::here("analysis/script/01_fx.R"),
+       encoding = "UTF-8")
+```
+
+```{r data}
+
+load(here::here("analysis/data/multi-domain-segregation.RData") )
+load(file = here::here("analysis/data/segregation-data.RData")) 
+
+```
+
+# Appendix A. Residential and School Features
+
+<!-- Armar tabla descriptiva de composición de población por categorías de educación (pri/sec/sup). -->
+
+```{r}
+#| fig.cap: "Residential Features: (a) Census Unit Scales (b) Urban Context Typology"
+#| fig.id: "RESIDENTIAL"
+#| fig.asp: 0.44
+
+
+include_graphics(here::here("analysis/figures/Residential-Features.png"))
+
+```
+
+&nbsp;
+
+```{r}
+#| fig.cap: "School locations (with kernel density estimation)"
+#| fig.id: "KERNEL"
+#| fig.asp: 0.57
+
+include_graphics(here::here("analysis/figures/Kernel-Distribution.png"))
+```
+
+&nbsp;
+```{r}
+
+a <- SEGRE$db_RESI[-1] |> 
+  apply(2, \(x) sum(x, na.rm = T))
+
+b <- SEGRE$db_EDU[-1] |> 
+    apply(2, \(x) sum(x, na.rm = T))
+
+tabla <- tibble(Residential = a, School = b) |> 
+  mutate(across(.fns = ~ paste0(format(.x, big.mark = " ") , " (", 
+                                round(.x / sum(.x) * 100) , "%)")),
+         level = c("Primary (PRI)", "Secundary (SEC)", 
+                   "Higher education (SUP)")) |> 
+  select(level, Residential, School)
+
+tit <- "Distribution of family education in Residential areas and Schools"
+
+if(knitr::is_html_output()){
+  tabla |> 
+    kableExtra::kbl(booktabs = T, digits = 2, caption = tit,
+                    align = c("l", "c", "c"),
+                    col.names = c("Family educational level",
+                                  "Residential", "School")) |> 
+    kableExtra::kable_classic(full_width = F, 
+                              lightable_options = c("striped",
+                                                    "hover"),
+                              font_size = 16)
+}else{
+  tabla |> 
+    flextable() |> 
+    set_caption(caption = tit,
+                autonum = run_autonum(seq_id = "tab", bkm = "ARGINAL",
+                                      bkm_all = F))  |>
+    align(align ='center', part = 'all') |> 
+    align(j = 1, align ='left', part = 'all') |> 
+    set_header_labels(level = 'Family educational level') |> 
+    autofit()
+}
+  
+rm(a, b, tabla, tit)
+```
+
+&nbsp;
+
+# Appendix B. Allocation Model vs Simple Allocation (without capacity constrain)
+
+<!-- Comparación con modelo nulo. Comparación de distancias recorridas por diferentes entornos urbanos con (a) modelo por distancia, frente a (b) modelo por programación lineal entera usada en el trabajo. -->
+
+```{r DIST}
+
+nam <- c("Colonial Historic City",
+         "Central Business District",
+         "High Class Residential",
+         "Middle Class Residential",
+         "Low Class Residential",
+         "Social housing",
+         "Urban Informal Neighborhoods",
+         "Total mean")
+
+tabla <- MOD_lp$tab1[, -4] |>
+  mutate(TIPO_HAB = nam,
+         across(.cols = starts_with("DIST_M"),
+                .fns = as.integer ),
+         PROP = round(DIST_M2 / DIST_M1, 2),
+         )
+
+tit <- "Distance to schools by urban context "
+
+if(knitr::is_html_output()){
+    tabla |> 
+        kableExtra::kbl(booktabs = T, digits = 2, caption = tit,
+                        align = c("l", "c", "c", "c"),
+                        col.names = c("Urban context",
+                                      "Simple", "Model",
+                                      "Ratio\n (Model / Simple)")) |>
+        kableExtra::kable_classic(full_width = F, 
+                              lightable_options = c("striped",
+                                                    "hover"),
+                              font_size = 16) |>
+        kableExtra::row_spec(7, hline_after = T) |> 
+        kableExtra::row_spec(8, bold = T) 
+}else{
+  tabla |> 
+    flextable() |> 
+    set_caption(caption = tit,
+                autonum = run_autonum(seq_id = "tab", bkm = "DIST",
+                                      bkm_all = T))  |>
+    align(align ='center', part = 'all') |> 
+    align(j = 1, align ='left', part = 'all') |> 
+    bold(i = 8) |> 
+    hline(i = 7) |> 
+    set_header_labels(TIPO_HAB = "Urban context", 
+                      DIST_M1 = "Simple",
+                      DIST_M2 = "Model",  
+                      PROP = "Ratio\n (Model / Simple)") |> 
+    autofit()
+}
+
+rm(nam, tabla, tit)
+```
+
+&nbsp;
+
+# Appendix C. Segregation indices
+
+```{r INDEX}
+
+tabla <- SEGRE$tab_indic |> 
+    mutate(MID = NA,
+           School_p = paste0(format(Model/School * 100, digits= 3), "%") ) |> 
+  select(Index, Residential, School, MID, Model, School_p)
+
+tit <- "Segregeation index (real and modelled situation)"
+
+if(knitr::is_html_output()){
+  tabla |> 
+    select(-MID) |> 
+    kableExtra::kbl(booktabs = T, digits = 2, caption = tit,
+                    align = c("l", rep("c", 4)),
+                    col.names = c("Segregation Index",
+                                  paste(c("Residential", "School", "Model"),
+                                        "Segregation"),
+                                  "% Explained")) |> 
+    kableExtra::add_header_above(header = c(" ", "Real" = 2, "Model" = 2 ), 
+                                 underline = T) |> 
+    kableExtra::kable_classic(full_width = F, 
+                              lightable_options = c("striped",
+                                                    "hover"),
+                              font_size = 16)
+  
+}else{
+  
+tabla |> 
+  flextable() |> 
+  set_caption(caption = tit,
+              autonum = run_autonum(seq_id = "tab", bkm = "INDEX",
+                                      bkm_all = T))  |>
+  align(align ='center', part = 'all') |> 
+  align(j = 1, align ='left', part = 'all') |> 
+  colformat_double(digits = 2) |> 
+  compose_eq() |> 
+  set_header_labels(Index = "Segregation Index") |>
+  footnote(j = 1, i = 3,
+           value = as_paragraph(
+             paste0("Values are bias-corrected. ", 2500,
+                   " Bootstrap iterations")),
+           ref_symbols = c("a")) |>
+  set_header_labels(Index = "Segregation Index", 
+                    Residential = "Residential Segregation",
+                    School = "School Segregation",  
+                    MID = " ",
+                    Model = "Model Segregation",  
+                    School_p = "% Explained") |> 
+  add_header_row(values = c("Segregation Index", "Real", " ", "Model"),
+                 colwidths = c(1, 2, 1, 2), ) |>
+  merge_v(j = c("Index", "MID"), part = "header") |> 
+  autofit()
+}
+
+rm(tabla, tit)
+```
+
+&nbsp;
+
+# Appendix D. Scale effect over residential segregation index
+
+<!-- Efecto escala. Generar en anexo en línea algún análisis que incorpore la escala de la medición, dando cuenta de que los resultados son consistentes a diferentes escalas de agrupamiento. -->
+
+```{r census-scale, fig.height = 7.87, fig.width = 5.67}
+#| fig.cap: "Segregation index by Census Unit Sales (Radio, Fraccion Barrio, and Comuna)"
+#| fig.id: "SCALE"
+#| fig.asp: 0.89
+
+include_graphics(here::here("analysis/figures/Scale-Effect.png"))
+  
+```
