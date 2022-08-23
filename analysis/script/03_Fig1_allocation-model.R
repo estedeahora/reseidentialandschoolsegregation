@@ -8,13 +8,16 @@ library(ggsci)
 library(ggpubr)
 library(grid)
 
-library(flextable)
-
 library(sf)
 
 library(lpSolve)
 
-# library(magick)
+library(flextable)
+
+set_flextable_defaults(big.mark = " ",
+                       font.size = 9,
+                       padding.bottom = 6,
+                       padding.top = 6)
 
 # Toy data --------------------------------------------------------------------
 

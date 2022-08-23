@@ -1,34 +1,6 @@
-# Packages ----------------------------------------------------------------
-
-# library(tidyverse)
-# library(sf)
-
-# library(ggpubr)
-# library(cowplot)
-
-library(knitr)
-
-# library(officer)
-# library(officedown)
-library(flextable)
-
-# library(spdep)
-# library(variosig)
-# library(gstat)
-
-# library(OasisR)
-# library(segregation)
-
 # General options ---------------------------------------------------------
 
 options(OutDec= ".")
-
-options(knitr.kable.NA = '')
-
-set_flextable_defaults(big.mark = " ",
-                       font.size = 9,
-                       padding.bottom = 6,
-                       padding.top = 6)
 
 #  Load data --------------------------------------------------------------
 
@@ -64,4 +36,9 @@ source(here::here("analysis/script/03_Fig3_school-segregation.R"),
 
 # Figure 4: School segregation
 source(here::here("analysis/script/03_Fig3_school-segregation.R"),
+       encoding = "UTF-8")
+
+# Appendix ---------------------------------------------------------
+
+source(here::here("analysis/script/04_Appendix-Fig.R"),
        encoding = "UTF-8")

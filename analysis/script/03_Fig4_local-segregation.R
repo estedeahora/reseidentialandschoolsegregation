@@ -16,6 +16,11 @@ library(gstat)
 library(segregation)
 library(OasisR)
 
+set_flextable_defaults(big.mark = " ",
+                       font.size = 9,
+                       padding.bottom = 6,
+                       padding.top = 6)
+
 # Data ----------------------------------------------------------------
 
 # Local M Real
