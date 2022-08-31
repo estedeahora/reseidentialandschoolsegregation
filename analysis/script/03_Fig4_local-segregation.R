@@ -62,8 +62,8 @@ mM <- base |>
   group_by(SECTOR) |>
   summarise(R2 = cor(ls_real,
                      ls_est,
-                     use = "complete.obs" )^2 * 100 ) |>
-  mutate(R2_lab = paste0("R[", SECTOR,"]^{2}", " == ", sprintf("%.2f", signif(R2, 3))),)
+                     use = "complete.obs" )^2 ) |>
+  mutate(R2_lab = paste0("R[", SECTOR,"]^{2}", " == ", sprintf("%.3f", signif(R2, 3))))
 
 p1 <- base |>
   filter(sig) |>
@@ -73,8 +73,6 @@ p1 <- base |>
   geom_point(data = base |> filter(!sig),
              size = 0.7, alpha = 0.3 , color = "darkgreen") +
   geom_abline(intercept = 0, slope = 1, linetype = 2, color = "tomato3") +
-  # geom_text(x = c(0.4, 0.4), y = c(0.9, 0.8), data= mM, color = "grey40",
-  #           label = paste0("R2 ", mM$SECTOR, ": ", round(mM$R2, 1), "%")) +
   geom_text(x = c(0.3, 0.3), y = c(0.9, 0.8), data= mM,
             color = "grey40", aes(label = R2_lab), parse = TRUE
             ) +
