@@ -1,10 +1,20 @@
 ---
 title: "Supplemental Material"
 subtitle: "School and Residential Segregation in the Reproduction of Urban Segregation"
-# output: html_document
 
-# output: officedown::rdocx_document
-output: bookdown::html_document2
+csl: "../_templates/sage-harvard.csl"
+bibliography: "../_templates/library.bib"
+
+# output:
+#   officedown::rdocx_document:
+#     reference_docx: "../_templates/word_SAGE_template.docx"
+
+output:
+  bookdown::html_document2:
+    number_sections: false
+    toc: true
+    toc_float: true
+
 ---
 
 ```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
@@ -54,12 +64,12 @@ load(file = here::here("analysis/data/segregation-data.RData"))
 
 ```
 
-# Appendix A. Residential and School Features
+# Appendix A. Residential and School Features {.unnumbered}
 
 <!-- Armar tabla descriptiva de composición de población por categorías de educación (pri/sec/sup). -->
 
 ```{r}
-#| fig.cap: "Residential Features: (a) Census Unit Scales (b) Urban Context Typology"
+#| fig.cap: "Residential Features: (a) Census Unit Scales (b) Urban Context Typology [@Marcos2015]"
 #| fig.id: "RESIDENTIAL"
 #| fig.asp: 0.44
 
@@ -68,17 +78,18 @@ include_graphics(here::here("analysis/figures/Residential-Features.png"))
 
 ```
 
-&nbsp;
+ 
 
 ```{r}
-#| fig.cap: "School locations (with kernel density estimation)"
+#| fig.cap: "School locations (kernel density estimation)"
 #| fig.id: "KERNEL"
 #| fig.asp: 0.57
 
 include_graphics(here::here("analysis/figures/Kernel-Distribution.png"))
 ```
 
-&nbsp;
+ 
+
 ```{r}
 
 a <- SEGRE$db_RESI[-1] |> 
@@ -90,7 +101,7 @@ b <- SEGRE$db_EDU[-1] |>
 tabla <- tibble(Residential = a, School = b) |> 
   mutate(across(.fns = ~ paste0(format(.x, big.mark = " ") , " (", 
                                 round(.x / sum(.x) * 100) , "%)")),
-         level = c("Primary (PRI)", "Secundary (SEC)", 
+         level = c("Primary (PRI)", "Secondary (SEC)", 
                    "Higher education (SUP)")) |> 
   select(level, Residential, School)
 
@@ -121,9 +132,9 @@ if(knitr::is_html_output()){
 rm(a, b, tabla, tit)
 ```
 
-&nbsp;
+ 
 
-# Appendix B. Allocation Model vs Simple Allocation (without capacity constrain)
+# Appendix B. Simple Allocation (without capacity constrain) vs Allocation Model {.unnumbered}
 
 <!-- Comparación con modelo nulo. Comparación de distancias recorridas por diferentes entornos urbanos con (a) modelo por distancia, frente a (b) modelo por programación lineal entera usada en el trabajo. -->
 
@@ -131,9 +142,9 @@ rm(a, b, tabla, tit)
 
 nam <- c("Colonial Historic City",
          "Central Business District",
-         "High Class Residential",
-         "Middle Class Residential",
-         "Low Class Residential",
+         "High-Class Residential",
+         "Middle-Class Residential",
+         "Low-Class Residential",
          "Social housing",
          "Urban Informal Neighborhoods",
          "Total mean")
@@ -145,7 +156,7 @@ tabla <- MOD_lp$tab1[, -4] |>
          PROP = round(DIST_M2 / DIST_M1, 2),
          )
 
-tit <- "Distance to schools by urban context "
+tit <- "Distance to schools by urban context (in meters)"
 
 if(knitr::is_html_output()){
     tabla |> 
@@ -180,9 +191,9 @@ if(knitr::is_html_output()){
 rm(nam, tabla, tit)
 ```
 
-&nbsp;
+ 
 
-# Appendix C. Segregation indices
+# Appendix C. Segregation indices {.unnumbered}
 
 ```{r INDEX}
 
@@ -191,7 +202,7 @@ tabla <- SEGRE$tab_indic |>
            School_p = paste0(format(Model/School * 100, digits= 3), "%") ) |> 
   select(Index, Residential, School, MID, Model, School_p)
 
-tit <- "Segregeation index (real and modelled situation)"
+tit <- "Segregation index (real and modelled situation)"
 
 if(knitr::is_html_output()){
   tabla |> 
@@ -241,17 +252,75 @@ tabla |>
 rm(tabla, tit)
 ```
 
-&nbsp;
+ 
 
-# Appendix D. Scale effect over residential segregation index
+# Appendix D. Scale effect over residential segregation index {.unnumbered}
 
 <!-- Efecto escala. Generar en anexo en línea algún análisis que incorpore la escala de la medición, dando cuenta de que los resultados son consistentes a diferentes escalas de agrupamiento. -->
 
 ```{r census-scale, fig.height = 7.87, fig.width = 5.67}
-#| fig.cap: "Segregation index by Census Unit Sales (Radio, Fraccion Barrio, and Comuna)"
+#| fig.cap: "Segregation index by Census Unit Scales (Radio, Fracción, Barrio, and Comuna)"
 #| fig.id: "SCALE"
 #| fig.asp: 0.89
 
 include_graphics(here::here("analysis/figures/Scale-Effect.png"))
   
 ```
+
+# Appendix E. Step-by-step of the allocation model {.unnumbered}
+
+## Step 1. Define the demand population and the educational profile of each census unit {.unnumbered}
+
+For each of the `J` census units, it is specified:
+
+-   *Demand population:* the resident population aged between 12 and 17 years We use this information to build the `demand` vector, where each element of the vector represents the amount of the 'demand population' in the census unit `j`.
+-   *Educational profile:* the percentage of the population for each of the educational groups (primary, secondary, and higher education). We consider the educational level of the primary provider in each household to create a matrix of size `J x 3` (number of education categories), where each row sums to 1. 
+
+This information is assigned to the centroid of each census unit, as it is considered to represent the average distance travelled by each potential student.
+
+## Step 2. Define the educational capacity of each school {.unnumbered}
+
+<!--# Para cada escuela se identifica la cantidad de vacantes, tomando como proxy la cantidad de estudiantes inscriptos el último año disponible. Se construye un vector "supply" en el que cada uno de los K elementos representa la máxima cantidad de estudiantes que puede recibir la escuela k. -->
+
+We identify the number of available places for each school by using the number of students enroled in the previous year as a proxy. The `supply` vector is created, where each element represents the maximum number of students that each school `k` can accommodate.
+
+## Step 3. Define the distance matrix between census units and schools {.unnumbered}
+
+A cost matrix `C` is generated using the street network distance between the centroid of each census unit and each school. For each school/census unit, the straight-line distance to the nearest street is calculated, and a new node is created in the network (if necessary). Then, we compute the street network distance between these two points of the network. We add (a) the two straight-line distances and (b) the in-network distances; to get the total distance between the census unit and the school. The resulting matrix `C` has a dimension of `J x K`, where each row represents one of the `J` census units and each column represents one of the `K` schools. The element $c_{jk}$, belonging to matrix C, indicates the distance between the centroid of census unit `j` and school `k`.
+
+## Step 4. Construct Allocation Matrix (linear programming) {.unnumbered}
+
+<!--# Este es el paso central del método propuesto. En este paso se busca encontrar la Matriz A (de dimensión J x K), en la cual cada elemento a_jk representa la cantidad de personas de la unidad censal j que deberían asistir a la escuela k para minimizar la distancia total recorrida. Para resolver este problema de optimización se utiliza un método de programación lineal entero, conocido como transportation problems. Este método permite minimizar una "función objetivo", manteniendo ciertas "constricciones".  -->
+
+This is the central step of the proposed method. Our goal is to find the allocation matrix `A` (with dimension `J x K`), where each element $a_{jk}$ represents the number of students from census unit `j` that should attend school `k` to minimize the total distance travelled. To solve this optimization problem, we use an *integer linear programming method* known as transportation problems, which allows us to minimize an 'objective function' subject to certain 'constraints'.
+
+***A. Define Objective Function***
+
+<!--# A. Definición de la función objetivo. En nuestra propuesta, se define como función objetivo la ecuación (1). Dado que la Matriz C representa la distancia entre las unidades censales y las escuelas, la ecuación (1) minimiza la distancia total recorrida por todos los estudiantes, para el caso en que estos fueran asignados según la Matriz A. -->
+
+We define the objective function as Equation `(1)`. Since matrix `C` represents the distance between census units and schools, Equation `(1)` minimizes the total distance travelled by all students, assuming that they are assigned according to matrix `A`.
+
+
+$$
+\min_{a \in \mathbb Z_{\geq 0}}( \sum_j^J \sum_k^K a_{jk}.c{jk} ) \quad \quad \textrm{(1)}
+$$
+
+***B. Define Constraints***
+
+<!--# Definición de las constricciones. Se establecen tres constricciones:  Que los elementos de la Matriz A sean enteros mayores o igual a 0 (a_jk  ϵ Z_(≥0)). Esta restricción es necesaria para garantizar que la cantidad de estudiantes asignados por la Matriz A sea un número entero en todos los casos. -->
+
+We establish three constraints:
+
+1.  The elements of matrix A must be non-negative integers ($a_{jk} \in \mathbb Z_{\geq 0}$). This constraint ensures that the number of students assigned by matrix `A` is always an integer.
+2.  All school-age individuals in each census unit must be assigned to a school. The sum of each row in matrix `A` must be equal to the population demand of each census unit ($\sum_k^K a_{jk} =demand_{jk}$; for each of the `J` census units).
+3.  Each school `k` must not exceed its maximum student capacity. In other words, the sum of each column in matrix `A` must be less than or equal to capacity of school `k` ($\sum_j^J a_{jk} \leq supply_{jk}$; for each of the `K` schools).
+
+***C. Optimisation***
+
+To solve the optimisation problem of the objective function `(1)`, we use the `R` package '`lpSolve`' [@Berkelaar2019]. This package provides an interface between `R` and '`lp_solve`' [@Berkelaar2004], a Mixed Integer Linear Programming solver written in `ANSI C`. The result is the allocation matrix `A` that minimises the objective function while adhering to the constraints mentioned above.
+
+## Step 5. Construction of the population profile for each school
+
+<!--# En base a la matriz de asignación `A` que relaciona las unidades censales y las escuelas, es posible asignar a cada escuela una cantidad de estudiantes proporcional a la composición educativa de cada una de las unidades censales. Para ello, se utiliza la información sobre el perfil educativo de los hogares de cada unidad censal. Por ejemplo, si la matriz `A` asigna 20 estudiantes de la unidad censal 'Census01' a la escuela 'School01', y el perfil educativo de los hogares en esa unidad censal es de 50/30/20 (`PRI`, `SEC`, `SUP`, respectivamente), entonces se asignarán a 'School01': 10 estudiantes de origen `PRI`; 6 estudiantes de origen `SEC`; y 4 estudiantes de origen `SUP`. Al repetir este proceso para todas las unidades censales asignadas a cada escuela, se puede obtener el perfil del origen educativo que se espera obtener según el modelo. Como resultado, se obtiene una matriz `K x 3` (una columna por cada nivel educativo). Esta matriz indica la cantidad de estudiantes asignados por el modelo a cada escuela `k` para cada categoría educativa. La composición 'modelada' puede ser comparada con la composición 'real' utilizando índices de segregación. -->Based on the allocation matrix `A` that relates census units and schools, it is possible to assign to each school a number of students proportional to the educational composition of each census unit. To achieve this, we use information on the educational profile of households in each census unit. For example, if matrix `A` assigns 20 students from census unit 'Census01' to school 'School01', and the educational profile of the households in that census unit is 0.5/0.3/0.2 (`PRI`, `SEC`, `SUP`, respectively), then 'School01' will be assigned 10 students from `PRI` background, 6 students from `SEC` background, and 4 students from `SUP` background. By repeating this process for all census units with students assigned to each school, we can obtain the expected educational background profile for each school based on the model. The result is a `K x 3` matrix (one column for each education level), indicating the number of students assigned by the model to each school `k` for each educational category. This 'modelled' composition can be compared to the 'real' composition using segregation indices.
+
+### References {.unnumbered}

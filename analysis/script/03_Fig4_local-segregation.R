@@ -11,6 +11,7 @@ library(ggplot2)
 library(ggpubr)
 
 library(sf)
+library(ggspatial)
 
 library(gstat)
 library(segregation)
@@ -100,6 +101,8 @@ p2 <- base |>
   geom_point(data = data.frame(x = 94000, y = 93200), alpha = 0.5,
              aes(x = x, y = y, fill = "Non significative \ndifference",
                  shape = NA), colour = "darkgreen") +
+  annotation_scale(location = "br") +
+  annotation_north_arrow(width = unit(1, "cm"), aes(location = "tr")) +
   scale_color_gradient2(expression(paste("Segregation Difference (",
                                          Delta, L[s], " = ",  L[s]^{Model},
                                          "-", L[s]^{Real}, ")", sep = "") ),
