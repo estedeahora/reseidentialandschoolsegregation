@@ -50,3 +50,8 @@ analysis/_draft
 analysis/_raw
 analysis/_submission
 analysis/_templates
+
+# *.xlsx (excel) y *.docx (word)
+
+*.xlsx
+*.docx
