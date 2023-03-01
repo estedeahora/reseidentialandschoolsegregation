@@ -14,6 +14,8 @@ output:
     number_sections: false
     toc: true
     toc_float: true
+    
+# toc-title: "Supplemental Material"
 ---
 
 ```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
