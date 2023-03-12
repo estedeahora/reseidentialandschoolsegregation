@@ -1,6 +1,6 @@
 ---
-title: "Supplemental Material"
-subtitle: "School and Residential Segregation in the Reproduction of Urban Segregation"
+# title: "Supplementary Material"
+# subtitle: "School and Residential Segregation in the Reproduction of Urban Segregation"
 
 csl: "../_templates/sage-harvard.csl"
 bibliography: "../_templates/library.bib"
@@ -12,8 +12,8 @@ bibliography: "../_templates/library.bib"
 output:
   bookdown::html_document2:
     number_sections: false
-    toc: true
-    toc_float: true
+    toc: false
+    toc_float: false
     
 # toc-title: "Supplemental Material"
 ---
@@ -327,4 +327,4 @@ To solve the optimisation problem of the objective function `(1)`, we use the `R
 
 Based on the allocation matrix `A` that relates census units and schools, it is possible to assign to each school a number of students proportional to the educational composition of each census unit. To achieve this, we use information on the educational profile of households in each census unit. For example, if matrix `A` assigns 20 students from census unit 'Census01' to school 'School01', and the educational profile of the households in that census unit is 0.5/0.3/0.2 (`PRI`, `SEC`, `SUP`, respectively), then 'School01' will be assigned 10 students with `PRI` background, 6 students with `SEC` background, and 4 students with `SUP` background. By repeating this process for all census units with students assigned to each school, we can obtain the expected educational background profile for each school based on the model. The result is a matrix of `K x 3` (one column for each educational level), indicating the number of students assigned by the model to each school `k` for each educational category. This 'modelled' composition can be compared to the 'real' composition using segregation indices.
 
-### References {.unnumbered}
+# References {.unnumbered}
