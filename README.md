@@ -3,34 +3,39 @@
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/estedeahora/residentialschoolsegregation/main?urlpath=rstudio)
 
+### How to cite
+
 This repository contains the data and code for our paper:
 
-> Serrati, P. (2022). *School and Residential Segregation in the
-> Reproduction of Urban Segregation*.
-> <!-- Name of journal/book <https://doi.org/xxx/xxx> -->
-> <!-- Our pre-print is online here: -->
+> Serrati, P. S. (2023). *School and Residential Segregation in the
+> Reproduction of Urban Segregation. A Case Study in Buenos Aires*.
+> *Urban Studies*, *0*(0) <https://doi.org/10.1177/00420980231178401>
 
-<!-- > Authors, (YYYY). _School and Residential Segregation in the Reproduction of Urban Segregation_. Name of journal/book, Accessed 06 jun. 2022. Online at <https://doi.org/xxx/xxx> -->
-
-### How to cite
+A pre-print version is online here:
+<https://osf.io/preprints/socarxiv/ayx3q/>.
 
 Please cite this compendium as:
 
-> Authors, (2022). *Compendium of R code and data for School and
-> Residential Segregation in the Reproduction of Urban Segregation*.
-> Accessed 06 jun. 2022. <!-- Online at <https://doi.org/xxx/xxx> -->
+> Serrati, P. S. (2023). *Compendium of R code and data for School and
+> Residential Segregation in the Reproduction of Urban Segregation. A
+> Case Study in Buenos Aires*. Accessed 30 may. 2023.
 
 ## Contents
 
 The **analysis** directory contains:
 
--   [:file_folder: data](/analysis/data): Data used in the analysis.
--   [:file_folder: figures](/analysis/figures): Plots and other
-    illustrations.
--   [:file_folder:
-    supplementary-materials](/analysis/supplementary-materials):
-    Supplementary materials including notes and other documents prepared
-    and collected during the analysis.
+- [:file_folder: data](/analysis/data): Data used in the analysis.
+- [:file_folder: figures](/analysis/figures): Plots and other
+  illustrations.
+- [:file_folder: scripts](/analysis/scripts): Includes R code to
+  reproduce the analysis, tables, figures and supplementary materials.
+- [:file_folder:
+  supplementary-materials](/analysis/supplementary-materials):
+  Supplementary materials including notes and other documents prepared
+  and collected during the analysis.
+
+The Appendix is available at:
+<https://pabloserrati.netlify.app/en/supplementary/2023_school-residential-segregation/>
 
 ## How to run in your browser or download and run locally
 
@@ -48,10 +53,15 @@ packages this analysis depends on (also listed in the
 `analysis/paper/paper.Rmd` and knit to produce the `paper.docx`, or run
 `rmarkdown::render("analysis/paper/paper.Rmd")` in the R console
 
-<!-- ### Licenses -->
+### Licenses
+
 <!-- **Text and figures :**  [CC-BY-4.0](http://creativecommons.org/licenses/by/4.0/) -->
-<!-- **Code :** See the [DESCRIPTION](DESCRIPTION) file -->
-<!-- **Data :** [CC-0](http://creativecommons.org/publicdomain/zero/1.0/) attribution requested in reuse -->
+
+**Code :**
+[CC-BY-NC-4.0](http://creativecommons.org/licenses/by-nc/4.0/)
+
+**Data :**
+[CC-BY-NC-4.0](http://creativecommons.org/licenses/by-nc/4.0/)
 
 ### Contributions
 
